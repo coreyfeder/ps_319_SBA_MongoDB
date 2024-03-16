@@ -1,10 +1,11 @@
 {
-  "name": "Per Scholas Project",
+  "name": "Per Scholas SBA318",
   "version": "1.0.0",
-  "description": "",
+  "description": "SBA 318: Express Server Application \n https://www.canva.com/design/DAFrinsqKgA/z9-LOsFAqZa9KH2uU-7z6A/view",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "debug": "nodemon --verbose index.js"
   },
   "keywords": [],
   "author": "",
