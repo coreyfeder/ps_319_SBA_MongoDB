@@ -27,16 +27,17 @@ const dataFile = `${serverPath}/${dataFilename}`
 // SBA Note:
 // Not going to deal with sync or race conditions or missing files or any such for this exercise.
 
+let dataHolder
 try {
-    const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+    dataHolder = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
     console.log("Data loaded.");
-    console.debug(data);
+    // console.debug(dataHolder);
 } catch (err) {
     console.error("Data file failed to load!")
     console.error(err);
     process.exit(1);
 }
-
+const data = dataHolder
 
 // MIDDLEWARE
 
@@ -52,9 +53,9 @@ function saveData() {
     }
 }
 
-// Sanitization function from mwag (https://stackoverflow.com/users/3160967/mwag) at StackOverflow, with edits
-// https://stackoverflow.com/questions/24229262/match-non-printable-non-ascii-characters-and-remove-from-text/71459309#71459309
 function sanitizeString(text) {
+    // Sanitization function from mwag (https://stackoverflow.com/users/3160967/mwag) at StackOverflow, with edits
+    // https://stackoverflow.com/questions/24229262/match-non-printable-non-ascii-characters-and-remove-from-text/71459309#71459309
     // strip control chars, trim, normalize whitespace
     text = String(text).trim();
     text = text.replace(/\p{C}/gu, '');
@@ -194,8 +195,6 @@ app.route('/toppings')
 //  > POST = add a new topping
 app.route('/topping')
     .all((req, res, next) => {
-        // code in this section will be executed 
-        // no matter which HTTP verb was used
         console.debug("endpoint: /topping")
         next()
     })
@@ -251,8 +250,6 @@ app.route('/order')
     })
 
 
-
-
 // ERROR HANDLING / endware
 //   If a call made it this far, something was wrong with it.
 
@@ -278,4 +275,5 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
     console.log(`APIzza server listening at:  ${url}`);
+    console.debug(`  Data loaded? ${Boolean(data)}`)
 });
