@@ -42,6 +42,16 @@ try {
 
 app.use(express.json())
 
+function saveData() {
+    try {
+        fs.writeFileSync(dataFile, JSON.stringify(data));
+        console.log("Data saved.");
+    } catch (err) {
+        console.error("Data failed to save!")
+        console.error(err);
+    }
+}
+
 // Sanitization function from mwag (https://stackoverflow.com/users/3160967/mwag) at StackOverflow, with edits
 // https://stackoverflow.com/questions/24229262/match-non-printable-non-ascii-characters-and-remove-from-text/71459309#71459309
 function sanitizeString(text) {
@@ -63,27 +73,39 @@ function sanitizeObject(uncleanObject, validProperties){
     let cleanObject = {}
     for (let property of validProperties) {
         switch(typeof uncleanObject.property) {
-            
-        }
-        
-        if (typeof uncleanObject.property in ['number','undefined']) {
-            cleanObject.property = uncleanObject.property
-        } else if (typeof uncleanObject.property in ['string','object']) {
-            cleanObject.property = sanitizeString(uncleanObject.property)
-        } else {
-            cleanObject.property = null
+            case "number":
+            case "boolean":
+                cleanObject.property = uncleanObject.property
+                break
+            case "string":
+                cleanObject.property = sanitizeString(uncleanObject.property)
+                break;
+            case "object":
+                cleanObject.property = 
+                    JSON.parse(
+                    sanitizeString(
+                    JSON.stringify(
+                    uncleanObject.property
+                )));
+                break;
+            default:
+                cleanObject.property = null;
         }
     }
+    return cleanObject
 }
 
 function sanitizeCustomer(potentialCustomer) {
-    const clean = (text) => {
-        result = string.trim().replace(/[^ -~]+/g, "");
+    let newCustomer = sanitizeObject(potentialCustomer, ["name","phone","address","delivery_notes"]);
+    if (newCustomer == {}) {
+        return {"error": "Invalid customer data"}
+    } else if (!newCustomer.name || !newCustomer.phone || !newCustomer.address) {
+        return {"error": "Missing required fields for new customer"}
+    } else {
+        newCustomer.customer_id = data.customers[-1].customer_id + 1
+        data.customers.push(newCustomer)
+        saveData();
     }
-    const validChars = /\w/u;
-    const invalidChars = /^\w/u;
-    let newCustomer = {}
-    newCustomer.name = 
 }
 
 
@@ -124,6 +146,19 @@ app.route('/customers')
     .get((req, res, next) => {
         res.json(data.customers)
     })
+
+
+app.route('/customer/:customer_id')
+    .all((req, res, next) => {
+        // code in this section will be executed 
+        // no matter which HTTP verb was used
+        console.debug("endpoint: /customer")
+        next()
+    })
+    .get((req, res, next) => {
+        // TODO: got, I hate searching lists. Make the customers an object make the ID the key
+        res.json(data.customers[0])
+    })
     .post((req, res, next) => {
         let newCustomerJSON = req.json()
         if (valdateCustomer(newCustomerJSON)) {
@@ -139,9 +174,36 @@ app.route('/customers')
         // PUT = replace an existing thing
     })
      */
-    .delete((req, res, next) => {
-        // DELETE = remove some data
+
+
+app.route('/toppings')
+    .all((req, res, next) => {
+        // code in this section will be executed 
+        // no matter which HTTP verb was used
+        console.debug("endpoint: /toppings")
+        next()
     })
+    .get((req, res, next) => {
+        // TODO: got, I hate searching lists. Make the customers an object make the ID the key
+        res.json(data.toppings)
+    })
+
+
+app.route('/topping')
+    .all((req, res, next) => {
+        // code in this section will be executed 
+        // no matter which HTTP verb was used
+        console.debug("endpoint: /topping")
+        next()
+    })
+    .post((req, res, next) => {
+        let newTopping = sanitizeString(req.json())
+        if (newTopping) {
+            data.toppings.push(newTopping)
+            saveData()
+        }
+    })
+
 
 
 // ERROR HANDLING / endware
