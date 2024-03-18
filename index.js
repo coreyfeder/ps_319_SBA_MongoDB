@@ -136,10 +136,10 @@ router.use((req, res, next) => {
 
 // ROUTES
 
+// customers
+//  > GET == list customers
 app.route('/customers')
     .all((req, res, next) => {
-        // code in this section will be executed 
-        // no matter which HTTP verb was used
         console.debug("endpoint: /customers")
         next()
     })
@@ -147,48 +147,51 @@ app.route('/customers')
         res.json(data.customers)
     })
 
-
+// customer/:customer_id
+//  > GET = list customer
 app.route('/customer/:customer_id')
     .all((req, res, next) => {
-        // code in this section will be executed 
-        // no matter which HTTP verb was used
-        console.debug("endpoint: /customer")
+        console.debug("endpoint: /customer/:customer_id")
         next()
     })
     .get((req, res, next) => {
-        // TODO: got, I hate searching lists. Make the customers an object make the ID the key
-        res.json(data.customers[0])
+        let foundCustomer = data.customers.find((item) => item.customer_id == req.params.customer_id)
+        if (foundCustomer) {
+            res.json(foundCustomer)
+        } else {
+            res.status(404).json({ error: `Resource not found.` })
+        }
+    })
+
+// customer
+//  > POST = add new customer
+app.route('/customer')
+    .all((req, res, next) => {
+        console.debug("endpoint: /customer")
+        next()
     })
     .post((req, res, next) => {
         let newCustomerJSON = req.json()
         if (valdateCustomer(newCustomerJSON)) {
+            // TODO: check that customer doesn't already exist. NBD if they do, but to be tidy.
             let newCustomer = sanitizeCustomer(newCustomerJSON)
-            addNewCustomer(newCustomerJSON)
+            addNewCustomer(newCustomer)
         }
     })
-    /* 
-    .patch((req, res, next) => {
-        // PATCH = update part of an existing thing
-    })
-    .put((req, res, next) => {
-        // PUT = replace an existing thing
-    })
-     */
 
-
+// toppings
+//  > GET = list toppings
 app.route('/toppings')
     .all((req, res, next) => {
-        // code in this section will be executed 
-        // no matter which HTTP verb was used
         console.debug("endpoint: /toppings")
         next()
     })
     .get((req, res, next) => {
-        // TODO: got, I hate searching lists. Make the customers an object make the ID the key
         res.json(data.toppings)
     })
 
-
+// topping
+//  > POST = add a new topping
 app.route('/topping')
     .all((req, res, next) => {
         // code in this section will be executed 
@@ -205,13 +208,57 @@ app.route('/topping')
     })
 
 
+// orders
+//  > GET = list orders
+app.route('/toppings')
+    .all((req, res, next) => {
+        console.debug("endpoint: /orders")
+        next()
+    })
+    .get((req, res, next) => {
+        res.json(data.orders)
+    })
+
+// order/:order_id
+//  > GET = list specified order
+app.route('/order/:order_id')
+    .all((req, res, next) => {
+        console.debug("endpoint: /order/:order_id")
+        next()
+    })
+    .get((req, res, next) => {
+        let foundOrder = data.orders.find((item) => item.order_id == req.params.order_id)
+        if (foundOrder) {
+            res.json(foundOrder)
+        } else {
+            res.status(404).json({ error: `Resource not found.` })
+        }
+    })
+
+// order
+//  > POST = add a new order
+app.route('/order')
+    .all((req, res, next) => {
+        console.debug("endpoint: /order")
+        next()
+    })
+    .post((req, res, next) => {
+        let newOrder = sanitizeString(req.json())
+        if (newOrder) {
+            data.order.push(newTopping)
+            saveData()
+        }
+    })
+
+
+
 
 // ERROR HANDLING / endware
 //   If a call made it this far, something was wrong with it.
 
 // catch any request sent without the prefix
 app.all("/", (req, res) => {
-    res.status(403).json({ error: `Public API endpoints are available at: ${url}` })
+    res.status(403).json({ error: `Welcome to APIzza! Public endpoints are available at: ${url}` })
 });
 
 // any other resource request
@@ -230,5 +277,5 @@ app.use((err, req, res, next) => {
 // GO / LISTEN
 
 app.listen(port, () => {
-    console.log(`Server listening at:  ${url}`);
+    console.log(`APIzza server listening at:  ${url}`);
 });
