@@ -172,7 +172,7 @@ app.route('/customer')
         next()
     })
     .post((req, res, next) => {
-        let newCustomerJSON = req.json()
+        let newCustomerJSON = req.express.json()
         if (valdateCustomer(newCustomerJSON)) {
             // TODO: check that customer doesn't already exist. NBD if they do, but to be tidy.
             let newCustomer = sanitizeCustomer(newCustomerJSON)
