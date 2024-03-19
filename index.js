@@ -190,6 +190,21 @@ app.route('/toppings')
     .get((req, res, next) => {
         res.json(data.toppings)
     })
+    .post((req, res, next) => {
+        let newToppings = req.body
+        if (Array.isArray(newToppings)) {
+            for (let topping of newToppings) {
+                if (typeof topping == 'string') {
+                    let newTopping = sanitizeString(topping)
+                    if (!data.toppings.includes(newTopping)) {
+                        data.toppings.push(newTopping)
+                        console.log(`Adding topping: ${newTopping}`)
+                    }
+                }
+            }
+        }
+        res.json(data.toppings)
+    })
 
 // topping
 //  > POST = add a new topping
@@ -199,7 +214,8 @@ app.route('/topping')
         next()
     })
     .post((req, res, next) => {
-        let newTopping = sanitizeString(req.json())
+        let newTopping = sanitizeString(req.body)
+        console.log(newTopping)
         if (newTopping) {
             data.toppings.push(newTopping)
             saveData()
