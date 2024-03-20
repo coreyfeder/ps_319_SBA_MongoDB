@@ -82,7 +82,7 @@ function sanitizeObject(uncleanObject, validProperties){
                 cleanObject.property = sanitizeString(uncleanObject.property)
                 break;
             case "object":
-                cleanObject.property = 
+                cleanObject.property =
                     JSON.parse(
                     sanitizeString(
                     JSON.stringify(
@@ -115,47 +115,43 @@ function sanitizeCustomer(potentialCustomer) {
 // a middleware function with no mount path => code executed for every request
 router.use((req, res, next) => {
     console.log([
-            Date.now(), 
+            Date.now(),
             'req',
-            req.method, 
+            req.method,
             req.path,
+            req.json,
         ].join(' : '))
     next()
-    /*  
-        Can I make a post-processing log entry here?
-        will control come back to this process after calling `next()`?
-     */ 
-    /* 
-    Unless debugging or saving to ephemeral storage, don't be quick to log full payloads.
-    And don't assume they'll be easy logs, because javascript hates humans:
-        - res.json()                    it'll likely just be "[object Object]"
-        - JSON.stringify(res.json())    it'll likely be enormous
-        - Util.inspect(res.json())      maybe tweak the paramters to limit line length, depth, or breadh
-     */
 })
 
 
 // ROUTES
 
+// testing the format of the incoming data payload
+app.route('/test')
+    .all((req, res, next) => {
+        console.debug("debug> TEST:")
+        if (req.json) {
+            res.send("data received: " + req.json)
+        } else {
+            res.send("No data received.")
+        }
+    })
+
 // customers
 //  > GET == list customers
 app.route('/customers')
-    .all((req, res, next) => {
-        console.debug("endpoint: /customers")
-        next()
-    })
     .get((req, res, next) => {
+        console.debug("debug> GET → /customers")
         res.json(data.customers)
     })
 
 // customer/:customer_id
 //  > GET = list customer
 app.route('/customer/:customer_id')
-    .all((req, res, next) => {
-        console.debug("endpoint: /customer/:customer_id")
-        next()
-    })
     .get((req, res, next) => {
+        console.debug("debug> GET → /customer/:customer_id")
+        console.debug(`debug> GET → /customer/${req.params.customer_id}`)
         let foundCustomer = data.customers.find((item) => item.customer_id == req.params.customer_id)
         if (foundCustomer) {
             res.json(foundCustomer)
@@ -172,6 +168,8 @@ app.route('/customer')
         next()
     })
     .post((req, res, next) => {
+        console.debug(`debug> POST → /customer`)
+        console.debug(`debug> Payload: ${req.body}`)
         let newCustomerJSON = req.express.json()
         if (valdateCustomer(newCustomerJSON)) {
             // TODO: check that customer doesn't already exist. NBD if they do, but to be tidy.
@@ -180,8 +178,10 @@ app.route('/customer')
         }
     })
 
+
 // toppings
 //  > GET = list toppings
+//  > POST = add toppings
 app.route('/toppings')
     .all((req, res, next) => {
         console.debug("endpoint: /toppings")
@@ -191,6 +191,8 @@ app.route('/toppings')
         res.json(data.toppings)
     })
     .post((req, res, next) => {
+        console.log("/toppings/post")
+        console.log(req.body)
         let newToppings = req.body
         if (Array.isArray(newToppings)) {
             for (let topping of newToppings) {
@@ -225,7 +227,7 @@ app.route('/topping')
 
 // orders
 //  > GET = list orders
-app.route('/toppings')
+app.route('/orders')
     .all((req, res, next) => {
         console.debug("endpoint: /orders")
         next()
