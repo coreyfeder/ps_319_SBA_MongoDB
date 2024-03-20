@@ -119,20 +119,20 @@ router.use((req, res, next) => {
             'req',
             req.method,
             req.path,
-            req.json,
         ].join(' : '))
-    next()
-})
+        next()
+    })
 
 
-// ROUTES
+    // ROUTES
 
-// testing the format of the incoming data payload
-app.route('/test')
+    // testing the format of the incoming data payload
+    app.route('/test')
     .all((req, res, next) => {
         console.debug("debug> TEST:")
-        if (req.json) {
-            res.send("data received: " + req.json)
+        console.log(req)
+        if (req) {
+            res.send("data received: " + req)
         } else {
             res.send("No data received.")
         }
@@ -142,7 +142,7 @@ app.route('/test')
 //  > GET == list customers
 app.route('/customers')
     .get((req, res, next) => {
-        console.debug("debug> GET → /customers")
+        // console.debug("debug> GET → /customers")
         res.json(data.customers)
     })
 
@@ -150,8 +150,8 @@ app.route('/customers')
 //  > GET = list customer
 app.route('/customer/:customer_id')
     .get((req, res, next) => {
-        console.debug("debug> GET → /customer/:customer_id")
-        console.debug(`debug> GET → /customer/${req.params.customer_id}`)
+        // console.debug("debug> GET → /customer/:customer_id")
+        // console.debug(`debug> GET → /customer/${req.params.customer_id}`)
         let foundCustomer = data.customers.find((item) => item.customer_id == req.params.customer_id)
         if (foundCustomer) {
             res.json(foundCustomer)
@@ -168,8 +168,8 @@ app.route('/customer')
         next()
     })
     .post((req, res, next) => {
-        console.debug(`debug> POST → /customer`)
-        console.debug(`debug> Payload: ${req.body}`)
+        // console.debug(`debug> POST → /customer`)
+        // console.debug(`debug> Payload: ${req.body}`)
         let newCustomerJSON = req.express.json()
         if (valdateCustomer(newCustomerJSON)) {
             // TODO: check that customer doesn't already exist. NBD if they do, but to be tidy.
@@ -191,8 +191,8 @@ app.route('/toppings')
         res.json(data.toppings)
     })
     .post((req, res, next) => {
-        console.log("/toppings/post")
-        console.log(req.body)
+        // console.log("/toppings/post")
+        // console.log(req.body)
         let newToppings = req.body
         if (Array.isArray(newToppings)) {
             for (let topping of newToppings) {
@@ -217,7 +217,7 @@ app.route('/topping')
     })
     .post((req, res, next) => {
         let newTopping = sanitizeString(req.body)
-        console.log(newTopping)
+        // console.log(newTopping)
         if (newTopping) {
             data.toppings.push(newTopping)
             saveData()
@@ -229,7 +229,7 @@ app.route('/topping')
 //  > GET = list orders
 app.route('/orders')
     .all((req, res, next) => {
-        console.debug("endpoint: /orders")
+        // console.debug("endpoint: /orders")
         next()
     })
     .get((req, res, next) => {
@@ -240,7 +240,7 @@ app.route('/orders')
 //  > GET = list specified order
 app.route('/order/:order_id')
     .all((req, res, next) => {
-        console.debug("endpoint: /order/:order_id")
+        // console.debug("endpoint: /order/:order_id")
         next()
     })
     .get((req, res, next) => {
@@ -256,7 +256,7 @@ app.route('/order/:order_id')
 //  > POST = add a new order
 app.route('/order')
     .all((req, res, next) => {
-        console.debug("endpoint: /order")
+        // console.debug("endpoint: /order")
         next()
     })
     .post((req, res, next) => {
@@ -278,7 +278,6 @@ app.all("/", (req, res) => {
 
 // any other resource request
 app.all((req, res) => {
-    console.error(err.stack);
     res.status(404).json({ error: `Resource not found.` });
 })
 
@@ -293,5 +292,4 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
     console.log(`APIzza server listening at:  ${url}`);
-    console.debug(`  Data loaded? ${Boolean(data)}`)
 });
