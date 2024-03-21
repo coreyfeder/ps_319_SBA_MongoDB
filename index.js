@@ -1,16 +1,22 @@
 const express = require("express")
+// const bodyParser = require("body-parser")
 const fs = require('fs')
+const util = require('node:util')
 const { exit } = require("process")
 
 const app = express()
 const router = express.Router()
+app.use(express.json())
+app.use(express.urlencoded( extended=true ))
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json({ extended: true }));
 app.use('/', router)  // mount the router on the app
 
 
 // this endpoint
 const protocol = "http"
 const host = "localhost"
-const port = 3000  // try 5000 if any troubles
+const port = 5050  // try 5000 if any troubles
 const prefix = "api"
 const baseurl = `${protocol}://${host}:${port}`
 const url = `${baseurl}/${prefix}`
@@ -18,7 +24,7 @@ const url = `${baseurl}/${prefix}`
 
 // CONNECTION TO DB
 // No database for this. Just some flat files.
-// Make that one flat file. Dataset is ver smol.
+// Make that sdone flat file. Dataset is ver smol.
 // No sync!! Do NOT run multiple instances!!
 const dataFilename = "APIzza.json"
 const serverPath = "/Users/corey/perscholas/class/SBA318_express_server_app/SBA318_express_server_app"
@@ -31,25 +37,36 @@ let dataHolder
 try {
     dataHolder = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
     console.log("Data loaded.");
-    // console.debug(dataHolder);
 } catch (err) {
     console.error("Data file failed to load!")
     console.error(err);
-    process.exit(1);
+    exit(1);
 }
 const data = dataHolder
+console.debug(dataHolder);
 
 // MIDDLEWARE
 
-app.use(express.json())
-
 function saveData() {
+    // janky JSON file or not, make the data persist
     try {
         fs.writeFileSync(dataFile, JSON.stringify(data));
         console.log("Data saved.");
     } catch (err) {
         console.error("Data failed to save!")
         console.error(err);
+    }
+}
+
+// TODO: move these things to another file. this is a mess.
+
+// why is this necessary? wasn't bodyparser supposed to do this?
+function extractJsonFromBody(payload) {
+    let result = {"error": "failure"}
+    try {
+        JSON.parse(Object.keys(payload)[0])
+    } catch {
+        result = {"error": "this data doesn't want to be JSON"}
     }
 }
 
@@ -114,25 +131,32 @@ function sanitizeCustomer(potentialCustomer) {
 
 // a middleware function with no mount path => code executed for every request
 router.use((req, res, next) => {
-    console.log([
+    console.log(req.body)
+    console.log(
+        [
             Date.now(),
-            'req',
+            "req",
             req.method,
             req.path,
-        ].join(' : '))
-        next()
-    })
+            extractJsonFromBody(req.body),
+        ].join(" : ",),
+    );
+    next();
+});
 
 
-    // ROUTES
+// ROUTES
 
-    // testing the format of the incoming data payload
-    app.route('/test')
+// testing the format of the incoming data payload
+app.route('/test')
     .all((req, res, next) => {
         console.debug("debug> TEST:")
-        console.log(req)
+        console.log("debug> req.body")
+        console.log(req.body)
+        console.log("extractJsonFromBody(req.body)")
+        console.log(extractJsonFromBody(req.body))
         if (req) {
-            res.send("data received: " + req)
+            res.send("data received: " + util.inspect(req))
         } else {
             res.send("No data received.")
         }
@@ -163,15 +187,13 @@ app.route('/customer/:customer_id')
 // customer
 //  > POST = add new customer
 app.route('/customer')
-    .all((req, res, next) => {
-        console.debug("endpoint: /customer")
-        next()
-    })
     .post((req, res, next) => {
         // console.debug(`debug> POST → /customer`)
         // console.debug(`debug> Payload: ${req.body}`)
-        let newCustomerJSON = req.express.json()
-        if (valdateCustomer(newCustomerJSON)) {
+        // console.log(req.express.json())
+        // console.log(extractJsonFromBody(req.body))
+        let newCustomerJSON = extractJsonFromBody(req.body)
+        if (sanitizeCustomer(newCustomerJSON)) {
             // TODO: check that customer doesn't already exist. NBD if they do, but to be tidy.
             let newCustomer = sanitizeCustomer(newCustomerJSON)
             addNewCustomer(newCustomer)
@@ -229,7 +251,7 @@ app.route('/topping')
 //  > GET = list orders
 app.route('/orders')
     .all((req, res, next) => {
-        // console.debug("endpoint: /orders")
+        console.debug("endpoint: /orders")
         next()
     })
     .get((req, res, next) => {
@@ -277,14 +299,15 @@ app.all("/", (req, res) => {
 });
 
 // any other resource request
-app.all((req, res) => {
-    res.status(404).json({ error: `Resource not found.` });
+app.use((req, res, next) => {
+    res.status(404).send( "Resource not found." )
 })
+
 
 // any other...other.
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(404).json({ error: `Resource not found.` });
+    res.status(404).send( "Resource not found." )
 })
 
 
