@@ -6,10 +6,9 @@ const { exit } = require("process")
 
 const app = express()
 const router = express.Router()
+// apparently critical to mount the decoders before mounting the router.
 app.use(express.json())
 app.use(express.urlencoded( extended=true ))
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json({ extended: true }));
 app.use('/', router)  // mount the router on the app
 
 
