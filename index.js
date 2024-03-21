@@ -126,8 +126,7 @@ function sanitizeCustomer(potentialCustomer) {
     } else if (!newCustomer.name || !newCustomer.phone || !newCustomer.address) {
         return {"error": "Missing required fields for new customer"}
     } else {
-        let confirmation = addNewCustomer(newCustomer)
-        return confirmation
+        return newCustomer
     }
 }
 
