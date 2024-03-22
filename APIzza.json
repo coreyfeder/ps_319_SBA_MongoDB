@@ -37,12 +37,14 @@
                 { "size": "XL", "toppings": ["pepperoni"], "notes": "feed the crew!" },
                 { "size": "L", "toppings": ["mushrooms"], "notes": "vegetarian option" },
                 { "size": "M", "toppings": ["coins"], "notes": "that boy ain't right."}
-            ]
+            ],
+            "order_notes": "Food for the staff."
         },
         {
             "order_id": 1,
             "customer_id": 1,
-            "pizzas": []
+            "pizzas": [],
+            "order_notes": "Fodder for testing DELETE."
         }
     ],
     "orders_count": 1,
