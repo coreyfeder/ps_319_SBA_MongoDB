@@ -17,10 +17,8 @@ app.use("/", router); // mount the router on the app
 // this endpoint
 const protocol = "http";
 const host = "localhost";
-const port = 5050; // try 5000 if any troubles
-const prefix = "api";
-const baseurl = `${protocol}://${host}:${port}`;
-const url = `${baseurl}/${prefix}`;
+const port = 5050;
+const url = `${protocol}://${host}:${port}`;
 
 // No database for this. Just some flat files.
 // Make that sdone flat file. Dataset is ver smol.
@@ -60,7 +58,8 @@ function saveData() {
     }
 }
 
-// TODO: move these things to another file. this is a mess.
+// IMPORTANT
+// TODO: move things to other files. this is a MESS.
 
 function sanitizeString(text) {
     // Sanitization function from mwag (https://stackoverflow.com/users/3160967/mwag) at StackOverflow, with edits
@@ -103,6 +102,7 @@ function sanitizeObject(uncleanObject, validProperties) {
 }
 
 function sanitizeCustomer(potentialCustomer) {
+    let result = {success: null, error: null}
     let newCustomer = sanitizeObject(potentialCustomer, [
         "name",
         "phone",
@@ -110,11 +110,20 @@ function sanitizeCustomer(potentialCustomer) {
         "delivery_notes",
     ]);
     if (newCustomer == {}) {
-        return { error: "Invalid customer data" };
-    } else if (!newCustomer.name || !newCustomer.phone || !newCustomer.address) {
-        return { error: "Missing required fields for new customer" };
+        result.error = "Invalid customer data"
+        return result
+    }
+    let missingFields = ""
+    if (!newCustomer.name) { missingFields += ", Name"; }
+    if (!newCustomer.phone) { missingFields += ", Phone"; }
+    if (!newCustomer.address) { missingFields += ", Address"; }
+    missingFields = missingFields.slice(2)
+    if (missingFields) {
+        result.error = `Missing required fields for new customer: ${missingFields}`
+        return result
     } else {
-        return newCustomer;
+        result.success = newCustomer
+        return result;
     }
 }
 
@@ -139,11 +148,23 @@ function sanitizeOrder(potentialOrder) {
 }
 
 function addNewOrder(newOrder) {
-    let maxCurrentOrderId = data.orders[data.orders.length - 1].order_id;
-    newOrder.order_id = maxCurrentOrderId + 1;
+    // keeping order number unique across launches
+    newOrder.order_id = ++data.orders_count;
     data.orders.push(newOrder);
     saveData();
     return newOrder;
+}
+
+function findCustomerById(customer_id) {
+    return data.customers.find((item) => item.customer_id == customer_id)
+}
+
+function findOrderById(order_id) {
+    return data.orders.find((item) => item.order_id == order_id)
+}
+
+function findOrderIndexById(order_id) {
+    return data.orders.findIndex((item) => item.order_id == order_id)
 }
 
 // ROUTER
@@ -168,16 +189,14 @@ router.use((req, res, next) => {
 
 // customers
 //  > GET == list customers
-app.route("/customers").get((req, res, next) => {
+app.route("/customers").get((req, res) => {
     res.json(data.customers);
 });
 
 // customer/:customer_id
 //  > GET = list customer
-app.route("/customer/:customer_id").get((req, res, next) => {
-    let foundCustomer = data.customers.find(
-        (item) => item.customer_id == req.params.customer_id,
-    );
+app.route("/customer/:customer_id").get((req, res) => {
+    let foundCustomer = findCustomerById(req.params.customer_id);
     if (foundCustomer) {
         res.json(foundCustomer);
     } else {
@@ -187,14 +206,16 @@ app.route("/customer/:customer_id").get((req, res, next) => {
 
 // customer
 //  > POST = add new customer
-app.route("/customer").post((req, res, next) => {
+app.route("/customer").post((req, res) => {
     let newCustomer = sanitizeCustomer(req.body);
-    if (newCustomer) {
+    console.debug("post-sanitation:")
+    console.debug(newCustomer)
+    if (newCustomer.success) {
         // TODO: check that customer doesn't already exist. NBD if they do, but to be tidy.
-        let confirmation = addNewCustomer(newCustomer);
+        let confirmation = addNewCustomer(newCustomer.success);
         res.json(confirmation);
     } else {
-        res.status(403).send("Unprocessable elements in data.");
+        res.status(403).send(newCustomer.error);
     }
 });
 
@@ -237,14 +258,24 @@ app.route("/orders").get((req, res) => {
 
 // order/:order_id
 //  > GET = list specified order
-app.route("/order/:order_id").get((req, res) => {
-    let foundOrder = data.orders.find((item) => item.order_id == req.params.order_id);
-    if (foundOrder) {
-        res.json(foundOrder);
-    } else {
-        res.status(404).json({ error: `Resource not found.` });
-    }
-});
+app.route("/order/:order_id")
+    .get((req, res) => {
+        let foundOrder = findOrderById(params.order_id);
+        if (foundOrder) {
+            res.json(foundOrder);
+        } else {
+            res.status(404).json({ error: `Resource not found.` });
+        }
+    })
+    .delete((req, res) => {
+        let foundOrderIndex = findOrderIndexById(params.order_id);
+        if (foundOrderIndex >= 0) {
+            let removed = data.orders.splice(foundOrderIndex,1);
+            res.json(removed)
+        } else {
+            res.status(404).json({ error: `Resource not found.` });
+        }
+    });
 
 // order
 //  > POST = add a new order
@@ -267,7 +298,7 @@ app.route("/order").post((req, res) => {
 //   If a call made it this far, something was wrong with it.
 
 // catch any request sent without the prefix
-app.all("/", (req, res) => {
+app.all("/*", (req, res) => {
     res.status(403).json({
         error: `Welcome to APIzza! Public endpoints are available at: ${url}`,
     });
@@ -284,13 +315,13 @@ app.use((req, res, next) => {
             // JSON.stringify(req.body),
         ].join(" : "),
     );
-    res.status(404).send("Resource not found.");
+    res.status(404).json({error: "Resource not found."});
 });
 
 // any other...other.
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(404).send("Error accessing resource.");
+    res.status(404).json({error: "Error accessing resource."});
 });
 
 // GO / LISTEN
