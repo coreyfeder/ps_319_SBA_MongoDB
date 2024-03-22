@@ -36,7 +36,7 @@
             "pizzas": [
                 { "size": "XL", "toppings": ["pepperoni"], "notes": "feed the crew!" },
                 { "size": "L", "toppings": ["mushrooms"], "notes": "vegetarian option" },
-                { "size": "M", "toppings": ["coins"], "notes": "that boy ain't right."}
+                { "size": "M", "toppings": ["coins"], "notes": "that boy ain't right." }
             ],
             "order_notes": "Food for the staff."
         },
@@ -47,6 +47,11 @@
             "order_notes": "Fodder for testing DELETE."
         }
     ],
-    "orders_count": 1,
-    "toppings": ["extra cheese", "pepperoni", "mushrooms", "coins"]
+    "orders_next_id": 2,
+    "toppings": [
+        "extra cheese",
+        "pepperoni",
+        "mushrooms",
+        "coins"
+    ]
 }

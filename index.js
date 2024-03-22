@@ -154,12 +154,12 @@ function addNewOrder(newOrder) {
     // keeping order number unique across launches
     console.log(`adding new order`)
     console.log(`current newOrder: ${newOrder}`)
-    console.log(`current order_count: ${data.orders_count}`)
-    newOrder.order_id = ++data.orders_count;
+    console.log(`current order_count: ${data.orders_next_id}`)
+    newOrder.order_id = data.orders_next_id++;  // assign first, then increment
     data.orders.push(newOrder);
     saveData();
     console.log(`new newOrder: ${newOrder}`)
-    console.log(`new order_count: ${data.orders_count}`)
+    console.log(`new order_count: ${data.orders_next_id}`)
     return newOrder;
 }
 
