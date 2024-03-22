@@ -22,6 +22,15 @@
             "delivery_notes": "Do not make eye contact with security."
         }
     ],
-    "orders": [],
+    "orders": [
+        {
+            "order_id": 1,
+            "customer_id": 1,
+            "pizzas": [
+                { "size": "L", "toppings": [], "notes": "well-done, please." },
+                { "size": "XL", "toppings": ["pepperoni", "coins"], "notes": "" }
+            ]
+        }
+    ],
     "toppings": ["cheese", "pepperoni", "mushrooms", "coins"]
 }
