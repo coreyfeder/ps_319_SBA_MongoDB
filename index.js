@@ -128,7 +128,6 @@ function sanitizeCustomer(potentialCustomer) {
 }
 
 function addNewCustomer(newCustomer) {
-    console.debug(newCustomer);
     let maxCurrentCustomerId = data.customers[data.customers.length - 1].customer_id;
     newCustomer.customer_id = maxCurrentCustomerId + 1;
     data.customers.push(newCustomer);
@@ -137,21 +136,30 @@ function addNewCustomer(newCustomer) {
 }
 
 function sanitizeOrder(potentialOrder) {
+    console.log("potentialOrder")
+    console.log(potentialOrder)
+    let result = {success: null, error: null}
     if (potentialOrder == {}) {
-        return { error: "Invalid order data" };
-    } else if (!potentialOrder.customerId) {
-        return { error: "Missing required fields for new order" };
+        result.error = "Invalid order data"
+    } else if (!potentialOrder.customer_id) {
+        result.error = "Missing required fields for new order"
     } else {
         // no other sanitization. the customer is always right!
-        return potentialOrder;
+        result.success = potentialOrder;
     }
+    return result
 }
 
 function addNewOrder(newOrder) {
     // keeping order number unique across launches
+    console.log(`adding new order`)
+    console.log(`current newOrder: ${newOrder}`)
+    console.log(`current order_count: ${data.orders_count}`)
     newOrder.order_id = ++data.orders_count;
     data.orders.push(newOrder);
     saveData();
+    console.log(`new newOrder: ${newOrder}`)
+    console.log(`new order_count: ${data.orders_count}`)
     return newOrder;
 }
 
@@ -245,6 +253,7 @@ app.route("/toppings")
                 }
             }
         }
+        saveData()
         res.json(data.toppings);
     });
 
@@ -260,7 +269,7 @@ app.route("/orders").get((req, res) => {
 //  > GET = list specified order
 app.route("/order/:order_id")
     .get((req, res) => {
-        let foundOrder = findOrderById(params.order_id);
+        let foundOrder = findOrderById(req.params.order_id);
         if (foundOrder) {
             res.json(foundOrder);
         } else {
@@ -268,9 +277,10 @@ app.route("/order/:order_id")
         }
     })
     .delete((req, res) => {
-        let foundOrderIndex = findOrderIndexById(params.order_id);
+        let foundOrderIndex = findOrderIndexById(req.params.order_id);
         if (foundOrderIndex >= 0) {
             let removed = data.orders.splice(foundOrderIndex,1);
+            saveData()
             res.json(removed)
         } else {
             res.status(404).json({ error: `Resource not found.` });
@@ -280,17 +290,19 @@ app.route("/order/:order_id")
 // order
 //  > POST = add a new order
 app.route("/order").post((req, res) => {
-    console.debug("POSTing a new order");
+    // console.debug("POSTing a new order");
     let newOrder = sanitizeOrder(req.body);
+    console.log("newOrder")
+    console.log(newOrder)
     // TODO: validate the order
     //  - customer_id must exist
     //  - size must be valid
     //  - toppings must exist (or maybe be automatically added?)
-    if (newOrder) {
-        let confirmation = addNewOrder(newOrder)
+    if (newOrder.success) {
+        let confirmation = addNewOrder(newOrder.success)
         res.json(confirmation)
     } else {
-        res.status(403).send("Unprocessable elements in data.");
+        res.status(403).json({error: newOrder.error});
     }
 });
 
@@ -318,10 +330,10 @@ app.use((req, res, next) => {
     res.status(404).json({error: "Resource not found."});
 });
 
-// any other...other.
+// any other...other?
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(404).json({error: "Error accessing resource."});
+    res.status(404).json({error: `Error accessing resource. ${err}`});
 });
 
 // GO / LISTEN

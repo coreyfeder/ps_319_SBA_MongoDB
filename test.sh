@@ -58,27 +58,26 @@ curl -X DELETE "http://localhost:${port}/customer/1"
 
 
 
-print "\n\nCUSTOMERS"
-print "\nAll customers"
-
+print "\n\nTOPPINGS"
+print "\nAll toppings"
 curl "http://localhost:${port}/toppings/"
-
+print "\nAdd new toppings"
 curl "http://localhost:${port}/toppings/" --json "$newToppings"
-
+print "\nAll toppings"
 curl "http://localhost:${port}/toppings/"
 
 
 
+print "\n\nORDERS"
+print "\nAll orders"
 curl "http://localhost:${port}/orders/"
-
+print "\nAdd new order"
 curl "http://localhost:${port}/order/" --json "$newOrder"
-
+print "\nAll orders"
 curl "http://localhost:${port}/orders/"
-
+print "\nProbably this order"
 curl "http://localhost:${port}/order/1"
-
+print "\nDelete the order"
 curl -X DELETE "http://localhost:${port}/order/1"
-
 curl "http://localhost:${port}/orders/1"
-
 curl "http://localhost:${port}/orders/"
