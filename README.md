@@ -1,4 +1,4 @@
-# Welcome to APIzza!
+# Welcome to APIzza v2!
 
 ![Distressing-looking Mario, or possibly Luigi in disguise, holding a sad, drippy pizza slice.](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.yBZb0D-yDOv_nOd7pfdCAwHaEV%26pid%3DApi&f=1&ipt=396a524c3775eb18916a1b3520aa625ba4689ca4e9842a69bc580e016995e6b8&ipo=images)
 ```
@@ -11,6 +11,7 @@ Host: **http://localhost:5050/**
 Required headers:
 * `Content-Type: application/json`
 * `Accept: application/json`
+
 
 ## Endpoints
 
@@ -36,28 +37,32 @@ Fields required unless marked as _optional_.
 ---
 
 
-# SBA 318: Express Server Application
+# SBA 319: MongoDB Database Application
 
-[Click here](https://www.canva.com/design/DAFrinsqKgA/z9-LOsFAqZa9KH2uU-7z6A/view) to see assignment details.
+- begun 2024-03-12
+- lost in time
+- due 2024-04-02
+
+[Click here](https://www.canva.com/design/DAFrigp0V5U/76Et4j_4KjlIyGSiv6gNsw/view) to see assignment details.
+
+[Click here](https://perscholas.instructure.com/courses/1923/assignments/355838) for course page.
 
 Note several of the objectives were removed due to us not having yet covered the material.
 
 
-## What, another SBA318 repo?
+ddd## What, _another_ SBA318 repo?
 
-Yeah, I submitted a different repository for this before. And then accidentally wrapped up half of my work for this project with not one, but _two different_ other projects. And then could not separate them, or even make sense of them. I got 1080º turned around, several times.
-
-I tried to salvage what I could from [ps_rest-express.git](https://github.com/coreyfeder/ps_rest-express.git) and [ps_Express1.git](https://github.com/coreyfeder/ps_Express1.git), and the things I somehow stuck in [ps_319SBA_MongoDB.git](https://github.com/coreyfeder/ps_319SBA_MongoDB.git); but mostly what I managed to salvage was a painful lesson about _needing_ to step away from the computer when my ADHD meds wear off, or else I wreck the place.
+Not really. The old SBA 319 repo _is_ one of the places I was accidentally putting SBA 318 code; but for this project I'm starting fresh from my final(ish) SBA318 and converting it to use MongoDB.
 
 
 ## Objectives
 
-* Create a server application with Node and Express.
-* Create a RESTful API using Express.
-* Create Express middleware.
-* Use Express middleware.
-* ~~Use a template engine to render views with Express.~~
-* ~~Interact with a self-made API through HTML forms.~~
+* Create a server application with Node, Express, and MongoDB.
+* Create a CRUD API using Express and MongoDB.
+* Create MongoDB indexes.
+* Use MongoDB indexing to make efficient queries.
+* Create MongoDB validation rules.
+* Use MongoDB validation to ensure data consistency.
 
 
 ## Instructions, Abridged
@@ -65,24 +70,23 @@ I tried to salvage what I could from [ps_rest-express.git](https://github.com/co
 Create a small Node and Express server application.
 Get functionality in place before worrying about filling it with something interesting.
 
-| Requirement | Rough Adjusted |
+| Requirement | Weight |
 | -- | --: |
-| Create and use at least two pieces of custom middleware. | 6.10% |
-| Create and use error-handling middleware. | 6.10% |
-| Use at least three different data categories (e.g., users, posts, or comments). | 6.10% |
-| Utilize reasonable data structuring practices. | 6.10% |
-| Create GET routes for all data that should be exposed to the client. | 6.10% |
-| Create POST routes for data, as appropriate. At least one data category should allow for client creation via a POST request. | 6.10% |
-| ~~Create PATCH or PUT routes for data, as appropriate. At least one data category should allow for client manipulation via a PATCH or PUT request.~~ | 0.00% |
-| Create DELETE routes for data, as appropriate. At least one data category should allow for client deletion via a DELETE request. | 6.10% |
-| Include query parameters for data filtering, where appropriate. At least one data category should allow for additional filtering through the use of query parameters.<br /><br />Note: DO NOT use API keys; this makes it more difficult for instructors to grade finished projects efficiently. | 6.10% |
-| Utilize route parameters, where appropriate. | 6.10% |
-| Adhere to the guiding principles of REST. | 12.20% |
-| ~~Create and render at least one view using a view template and template engine. This can be a custom template engine or a third-party engine.<br /><br />If you are stuck on how to approach this, think about ways you could render the current state of your API's data for easy viewing.~~ | 0.00% |
-| ~~Use simple CSS to style the rendered views. <br /><br />Note: This is not a test of design; it is a test of serving static files using Express. The CSS can be very simple.~~ | 0.00% |
-| ~~Include a form within a rendered view that allows for interaction with your RESTful API.~~ | 0.00% |
-| Utilize reasonable code organization practices. | 6.10% |
-| Ensure that the program runs without errors (comment out things that do not work, and explain your blockers - you can still receive partial credit). | 12.20% |
-| Commit frequently to the git repository. | 6.10% |
-| Include a README file that contains a description of your application. | 2.44% |
-| Level of effort displayed in creativity, presentation, and user experience. | 6.10% |
+| Use at least three different data collections within the database (such as users, posts, or comments). | 5% |
+| Utilize reasonable data structuring practices. | 10% |
+| Create GET routes for all data that should be exposed to the client, using appropriate query commands to retrieve the data from the database. | 10% |
+| Create POST routes for data, as appropriate. At least one data category should allow for client creation via a POST request. | 10% |
+| Create PATCH or PUT routes for data, as appropriate, using appropriate update commands to change data in the database. At least one data collection should allow for client manipulation via a PATCH or PUT request. | 10% |
+| Create DELETE routes for data, as appropriate, using appropriate delete commands to remove data from the database. At least one data collection should allow for client deletion via a DELETE request | 10% |
+| Include sensible indexes for any and all fields that are queried frequently. For fields that may have a high write-to-read ratio, you may forgo indexes for performance considerations. Make comments of this where applicable. | 5% |
+| Include sensible MongoDB data validation rules for at least one data collection.<br><br>Note: this may be accomplished in a number of ways. If you choose to perform this task outside of your application's code, you must include a way to test the validation within the application's routes. This can be as simple as providing a POST route that attempts to create an invalid document and displays the resulting error. | 5% |
+| Populate your application's collections with sample data illustrating the use case of the collections. You must include at least five sample documents per collection.<br><br>Note: Double-check this requirement before submission. Testing your delete routes may leave you under the requirement. To be safe, populate your collections with sample data well above the requirement (we recommend 10-20 documents). | 5% |
+| Utilize reasonable code organization practices. | 5% |
+| Ensure that the program runs without errors (comment out things that do not work, and explain your blockers - you can still receive partial credit). | 10% |
+| Commit frequently to the git repository. | 5% |
+| Include a README file that contains a description of your application. | 5% |
+| Level of effort displayed in creativity, presentation, and user experience. | 5% |
+
+**Bonus**:
+Use Mongoose to implement your application.
+Note: The validation requirements above must still be implemented database-side, but should also be implemented application-side within your Mongoose schema(s).
