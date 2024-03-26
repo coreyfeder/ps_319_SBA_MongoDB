@@ -27,7 +27,7 @@ Fields required unless marked as _optional_.
 | `/orders` | GET | See a list of currently-open orders. |  |
 | `/order/order_id` | GET | See details of a specific order.<br>*_Currently provides no additional detail._ |  |
 | `/order` | POST | Place an order! Yeaahh, this is the one you want. | `customer_id`: _integer_<br>`pizzas`: [ {`size`, `toppings`, `notes`}* ], `order_notes`: _string_ (optional) |
-| `/order/order_id` | DELETE |  WHY WOULD YOU WANT TO DO THIS. |  |
+| `/order/order_id` | DELETE |  WHY SDSSSSWOULD YOU WANT TO DO THIS. |  |
 
 <br>
 <br>
