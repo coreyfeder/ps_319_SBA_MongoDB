@@ -3,29 +3,57 @@ const express = require("express");
 const fs = require("fs");
 const util = require("node:util");
 const { exit } = require("process");
+const mongoose = require("mongoose");
 
 const app = express();
 const router = express.Router();
-// Apparently it's _critical_ to mount the decoders before mounting the router.
-// Wish they'd told us that. Hard enough dancing around this arbitrary and
-// annoying "middleware" convention; we also have to deal with getting torpedoed
-// by undocumented exceptions? Screw you too, Express.
 app.use(express.json());
 app.use(express.urlencoded((extended = true)));
-app.use("/", router); // mount the router on the app
+app.use("/", router);
 
 // this endpoint
 const protocol = "http";
 const host = "localhost";
-const port = 5050;
+const port = 5555;
 const url = `${protocol}://${host}:${port}`;
 
-// No database for this. Just some flat files.
-// Make that sdone flat file. Dataset is ver smol.
-// No sync!! Do NOT run multiple instances!!
+/*
+// MongoDB
+const mongoAppId = 0
+const mongoApiVersion = 0
+const mongoBaseUrlGlobal = `https://data.mongodb-api.com/app/${"<App ID>"}/endpoint/data/${"<API_Version>"}`
+const mongoBaseUrlLocal = `https://${"<Region>"}.${"<Cloud>"}.data.mongodb-api.com/app/${"<App ID>"}/endpoint/data/${"<API Version>"}`
+const mongoDataSource
+const mongoDatabase
+const mongoCollection
+const mongoFilter
+const mongoProjection
+const mongo
+ */
+/*
+Examples:
+    https://data.mongodb-api.com/app/myapp-abcde/endpoint/data/v1/action/insertOne
+    https://data.mongodb-api.com/app/<App ID>/endpoint/data/<API Version>
+    https://<Region>.<Cloud>.data.mongodb-api.com/app/<App ID>/endpoint/data/<API Version>
+    https://data.mongodb-api.com/app/<App ID>/endpoint/data/<API Version>
+
+curl -s "https://data.mongodb-api.com/app/myapp-abcde/endpoint/data/v1/action/findOne" \
+  -X POST \
+  -H "Accept: application/json" \
+  -H "apiKey: TpqAKQgvhZE4r6AOzpVydJ9a3tB1BLMrgDzLlBLbihKNDzSJWTAHMVbsMoIOpnM6" \
+  -d '{
+    "dataSource": "mongodb-atlas",
+    "database": "sample_mflix",
+    "collection": "movies",
+    "filter": {
+      "title": "The Matrix"
+    }
+  }'
+*/
+
+
 const dataFilename = "APIzza.json";
-const serverPath =
-    "/Users/corey/perscholas/class/SBA318_express_server_app/SBA318_express_server_app";
+const serverPath = ".";
 const dataFile = `${serverPath}/${dataFilename}`;
 
 // SBA Note:
