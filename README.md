@@ -23,10 +23,11 @@ Fields required unless marked as _optional_.
 | `/customers/:customer_id` | GET | Receive one customer's detailed record.<br>*_Currently provides no additional detail._ |  |
 | `/customers` | POST | Create a new customer. | `name`: _string_,<br>`phone`: _string_,<br>`address`: _string_,<br>`delivery_notes`: _string_ (optional) Additional delivery instructions (code for the gate, password for the bouncer, etc.). |
 | `/toppings` | GET | See a list of currently-available toppings. |  |
-| `/toppings` | POST | Add a new topping. We take all forms of special request! | _[string*]_ |
+| `/toppings` | POST | Add a new topping. We take all forms of special request! | `toppings` object |
+|  |  | `toppings` object | `name`: _string_,<br>    `premium`: _boolean_,<br>    `vegetarian`: _boolean_,<br>    `vegan`: _boolean_,<br>    `consumable outside Mario World`: _boolean_ |
 | `/orders` | GET | See a list of currently-open orders. |  |
 | `/orders` | POST | Place an order! Yeaahh, this is the one you want. | `customer_id`: _integer_<br>`pizzas`: [`pizza` objects], `order_notes`: _string_ (optional) |
-|   |   | `pizza` object | `size`: {'S', 'M', 'L', 'XL'},<br>`toppings`: [`toppings` names],<br>`notes`: _string_ |
+|   |   | `pizza` object | `size`: {"S", "M", "L", "XL"},<br>`toppings`: [`toppings` names],<br>`notes`: _string_ |
 | `/orders/:order_id` | GET | See details of a specific order.<br>*_Currently provides no additional detail._ |  |
 | `/orders/:order_id` | DELETE |  WHY WOULD YOU WANT TO DO THIS. |  |
 
@@ -42,7 +43,7 @@ Fields required unless marked as _optional_.
 
 - begun 2024-03-12
 - lost in time
-- due 2024-04-02
+- due 2024-04-03
 
 [Click here](https://www.canva.com/design/DAFrigp0V5U/76Et4j_4KjlIyGSiv6gNsw/view) to see assignment details.
 
