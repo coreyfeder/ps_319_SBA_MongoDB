@@ -1,0 +1,50 @@
+{
+    "extra cheese": {
+        "premium": false,
+        "vegetarian": true,
+        "vegan": false,
+        "consumable outside Mario World": true
+    },
+    "pepperoni": {
+        "premium": false,
+        "vegetarian": false,
+        "vegan": false,
+        "consumable outside Mario World": true
+    },
+    "mushrooms": {
+        "premium": false,
+        "vegetarian": true,
+        "vegan": true,
+        "consumable outside Mario World": false
+    },
+    "coins": {
+        "premium": true,
+        "vegetarian": true,
+        "vegan": true,
+        "consumable outside Mario World": false
+    },
+    "goomba_bacon": {
+        "premium": false,
+        "vegetarian": false,
+        "vegan": false,
+        "consumable outside Mario World": true
+    },
+    "bloober_calamari": {
+        "premium": false,
+        "vegetarian": false,
+        "vegan": false,
+        "consumable outside Mario World": false
+    },
+    "piranha_plant": {
+        "premium": false,
+        "vegetarian": true,
+        "vegan": true,
+        "consumable outside Mario World": true
+    },
+    "stars": {
+        "premium": true,
+        "vegetarian": true,
+        "vegan": true,
+        "consumable outside Mario World": true
+    }
+}

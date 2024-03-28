@@ -35,7 +35,11 @@
             "customer_id": 0,
             "pizzas": [
                 { "size": "XL", "toppings": ["pepperoni"], "notes": "feed the crew!" },
-                { "size": "L", "toppings": ["mushrooms"], "notes": "vegetarian option" },
+                {
+                    "size": "L",
+                    "toppings": ["mushrooms"],
+                    "notes": "vegetarian option"
+                },
                 { "size": "M", "toppings": ["coins"], "notes": "that boy ain't right." }
             ],
             "order_notes": "Food for the staff."
@@ -48,10 +52,5 @@
         }
     ],
     "orders_next_id": 2,
-    "toppings": [
-        "extra cheese",
-        "pepperoni",
-        "mushrooms",
-        "coins"
-    ]
+    "toppings": ["extra cheese", "pepperoni", "mushrooms", "coins"]
 }
