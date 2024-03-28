@@ -20,14 +20,15 @@ Fields required unless marked as _optional_.
 | endpoint | method | description | data |
 |--|--|--|--|
 | `/customers` | GET | See a list of customers. Who cares about privacy?! |  |
-| `/customer/:customer_id` | GET | Receive one customer's detailed record.<br>*_Currently provides no additional detail._ |  |
-| `/customer` | POST | Create a new customer. | `name`: _string_,<br>`phone`: _string_,<br>`address`: _string_,<br>`delivery_notes`: _string_ (optional) Any special instructions necessary for successful delivery. |
+| `/customers/:customer_id` | GET | Receive one customer's detailed record.<br>*_Currently provides no additional detail._ |  |
+| `/customers` | POST | Create a new customer. | `name`: _string_,<br>`phone`: _string_,<br>`address`: _string_,<br>`delivery_notes`: _string_ (optional) Additional delivery instructions (code for the gate, password for the bouncer, etc.). |
 | `/toppings` | GET | See a list of currently-available toppings. |  |
 | `/toppings` | POST | Add a new topping. We take all forms of special request! | _[string*]_ |
 | `/orders` | GET | See a list of currently-open orders. |  |
-| `/order/order_id` | GET | See details of a specific order.<br>*_Currently provides no additional detail._ |  |
-| `/order` | POST | Place an order! Yeaahh, this is the one you want. | `customer_id`: _integer_<br>`pizzas`: [ {`size`, `toppings`, `notes`}* ], `order_notes`: _string_ (optional) |
-| `/order/order_id` | DELETE |  WHY SDSSSSWOULD YOU WANT TO DO THIS. |  |
+| `/orders` | POST | Place an order! Yeaahh, this is the one you want. | `customer_id`: _integer_<br>`pizzas`: [`pizza` objects], `order_notes`: _string_ (optional) |
+|   |   | `pizza` object | `size`: {'S', 'M', 'L', 'XL'},<br>`toppings`: [`toppings` names],<br>`notes`: _string_ |
+| `/orders/:order_id` | GET | See details of a specific order.<br>*_Currently provides no additional detail._ |  |
+| `/orders/:order_id` | DELETE |  WHY WOULD YOU WANT TO DO THIS. |  |
 
 <br>
 <br>
@@ -50,9 +51,9 @@ Fields required unless marked as _optional_.
 Note several of the objectives were removed due to us not having yet covered the material.
 
 
-ddd## What, _another_ SBA318 repo?
+## What, _another_ SBA318 repo?
 
-Not really. The old SBA 319 repo _is_ one of the places I was accidentally putting SBA 318 code; but for this project I'm starting fresh from my final(ish) SBA318 and converting it to use MongoDB.
+Not really. The old SBA 319 repo _is_ one of the places I was accidentally putting SBA 318 code; but for this project I'm starting fresh from my final(ish) SBA318 and converting it to use MongoDB. And fixing the confusion I had over the REST API Naming Conventions and Best Practices regarding plurality.
 
 
 ## Objectives
