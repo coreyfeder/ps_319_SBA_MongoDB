@@ -1,0 +1,28 @@
+Remember to use the `lean` option for GET calls.
+
+
+```
+// As long as you don't need any of the Person model's virtuals or getters,
+// you can use `lean()`.
+app.get('/person/:id', function(req, res) {
+  Person.findOne({ _id: req.params.id }).lean().
+    then(person => res.json({ person })).
+    catch(error => res.json({ error: error.message }));
+});
+```
+
+But not in others, as you can't save.
+
+```
+// This route should **not** use `lean()`, because lean means no `save()`.
+app.put('/person/:id', function(req, res) {
+  Person.findOne({ _id: req.params.id }).
+    then(person => {
+      assert.ok(person);
+      Object.assign(person, req.body);
+      return person.save();
+    }).
+    then(person => res.json({ person })).
+    catch(error => res.json({ error: error.message }));
+});
+```
