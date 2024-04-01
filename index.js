@@ -166,36 +166,9 @@ router.use((req, res, next) => {
 // ROUTES
 
 // customers
-//  > GET == list customers
-app.route("/customers").get((req, res) => {
-    res.json(data.customers);
-});
-
-// customer/:customer_id
-//  > GET = list customer
-app.route("/customer/:customer_id").get((req, res) => {
-    let foundCustomer = findCustomerById(req.params.customer_id);
-    if (foundCustomer) {
-        res.json(foundCustomer);
-    } else {
-        res.status(404).json({ error: `Resource not found.` });
-    }
-});
-
-// customer
-//  > POST = add new customer
-app.route("/customer").post((req, res) => {
-    let newCustomer = sanitizeCustomer(req.body);
-    console.debug("post-sanitation:")
-    console.debug(newCustomer)
-    if (newCustomer.success) {
-        // TODO: check that customer doesn't already exist. NBD if they do, but to be tidy.
-        let confirmation = addNewCustomer(newCustomer.success);
-        res.json(confirmation);
-    } else {
-        res.status(403).send(newCustomer.error);
-    }
-});
+app.route("/customers").get(getCustomerById)
+app.route("/customers").post(postNewCustomer)
+app.route("/customers/:customer_id").get(getCustomerList)
 
 // toppings
 //  > GET = list toppings

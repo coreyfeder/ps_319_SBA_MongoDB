@@ -1,10 +1,11 @@
+// TODO: MONGOIZE
+
 function getOrdersList(req, res); {
     console.debug("endpoint: /orders");
     console.debug(data.orders);
     res.send(data.orders);
 }
 
-app.route("/orders/:order_id")
 function getOrderById(req, res) {
     let foundOrder = findOrderById(req.params.order_id);
     if (foundOrder) {
