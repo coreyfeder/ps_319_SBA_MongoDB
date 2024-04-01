@@ -1,3 +1,4 @@
+import express from "express"
 const express = require("express");
 // const bodyParser = require("body-parser")
 const fs = require("fs");
@@ -17,77 +18,26 @@ const host = "localhost";
 const port = 5555;
 const url = `${protocol}://${host}:${port}`;
 
-/*
-// MongoDB
-const mongoAppId = 0
-const mongoApiVersion = 0
-const mongoBaseUrlGlobal = `https://data.mongodb-api.com/app/${"<App ID>"}/endpoint/data/${"<API_Version>"}`
-const mongoBaseUrlLocal = `https://${"<Region>"}.${"<Cloud>"}.data.mongodb-api.com/app/${"<App ID>"}/endpoint/data/${"<API Version>"}`
-const mongoDataSource
-const mongoDatabase
-const mongoCollection
-const mongoFilter
-const mongoProjection
-const mongo
- */
-/*
-Examples:
-    https://data.mongodb-api.com/app/myapp-abcde/endpoint/data/v1/action/insertOne
-    https://data.mongodb-api.com/app/<App ID>/endpoint/data/<API Version>
-    https://<Region>.<Cloud>.data.mongodb-api.com/app/<App ID>/endpoint/data/<API Version>
-    https://data.mongodb-api.com/app/<App ID>/endpoint/data/<API Version>
-
-curl -s "https://data.mongodb-api.com/app/myapp-abcde/endpoint/data/v1/action/findOne" \
-  -X POST \
-  -H "Accept: application/json" \
-  -H "apiKey: TpqAKQgvhZE4r6AOzpVydJ9a3tB1BLMrgDzLlBLbihKNDzSJWTAHMVbsMoIOpnM6" \
-  -d '{
-    "dataSource": "mongodb-atlas",
-    "database": "sample_mflix",
-    "collection": "movies",
-    "filter": {
-      "title": "The Matrix"
-    }
-  }'
-*/
-
 
 const dataFilename = "APIzza.json";
 const serverPath = ".";
 const dataFile = `${serverPath}/${dataFilename}`;
 
-// SBA Note:
-// Not going to deal with sync or race conditions or missing files or any such for this exercise.
 
-// If I declare this in the `try`, it won't esccape the block scope.
-// I need to assign it to something in the global scope. Without using `var`.
-let dataHolder;
-try {
-    dataHolder = JSON.parse(fs.readFileSync(dataFile, "utf8"));
-    console.log("Data loaded.");
-} catch (err) {
-    console.error("Data file failed to load!");
-    console.error(err);
-    exit(1);
-}
-// but I want it to be a `const`. For security.
-const data = dataHolder;
+/*
+    Removed data read from flat file.
+    TODO:
+    Replace with data import via Mongoose.
+ */
+
 
 // MIDDLEWARE
 
 function saveData() {
-    // janky JSON file or not, make the data persist
-    try {
-        fs.writeFileSync(dataFile, JSON.stringify(data));
-        console.log("Data saved.");
-    } catch (err) {
-        console.error("Data failed to save!");
-        console.error(err);
-    }
+    // TODO
+    return
 }
 
-// IMPORTANT
-// TODO: move things to other files. this is a MESS.
 
 function sanitizeString(text) {
     // Sanitization function from mwag (https://stackoverflow.com/users/3160967/mwag) at StackOverflow, with edits
@@ -153,14 +103,6 @@ function sanitizeCustomer(potentialCustomer) {
         result.success = newCustomer
         return result;
     }
-}
-
-function addNewCustomer(newCustomer) {
-    let maxCurrentCustomerId = data.customers[data.customers.length - 1].customer_id;
-    newCustomer.customer_id = maxCurrentCustomerId + 1;
-    data.customers.push(newCustomer);
-    saveData();
-    return newCustomer;
 }
 
 function sanitizeOrder(potentialOrder) {
@@ -285,54 +227,10 @@ app.route("/toppings")
         res.json(data.toppings);
     });
 
-// orders
-//  > GET = list orders
-app.route("/orders").get((req, res) => {
-    console.debug("endpoint: /orders");
-    console.debug(data.orders);
-    res.send(data.orders);
-});
-
-// order/:order_id
-//  > GET = list specified order
-app.route("/order/:order_id")
-    .get((req, res) => {
-        let foundOrder = findOrderById(req.params.order_id);
-        if (foundOrder) {
-            res.json(foundOrder);
-        } else {
-            res.status(404).json({ error: `Resource not found.` });
-        }
-    })
-    .delete((req, res) => {
-        let foundOrderIndex = findOrderIndexById(req.params.order_id);
-        if (foundOrderIndex >= 0) {
-            let removed = data.orders.splice(foundOrderIndex,1);
-            saveData()
-            res.json(removed)
-        } else {
-            res.status(404).json({ error: `Resource not found.` });
-        }
-    });
-
-// order
-//  > POST = add a new order
-app.route("/order").post((req, res) => {
-    // console.debug("POSTing a new order");
-    let newOrder = sanitizeOrder(req.body);
-    console.log("newOrder")
-    console.log(newOrder)
-    // TODO: validate the order
-    //  - customer_id must exist
-    //  - size must be valid
-    //  - toppings must exist (or maybe be automatically added?)
-    if (newOrder.success) {
-        let confirmation = addNewOrder(newOrder.success)
-        res.json(confirmation)
-    } else {
-        res.status(403).json({error: newOrder.error});
-    }
-});
+app.route("/orders").get(getOrdersList);
+app.route("/orders/:order_id").get(getOrderById)
+app.route("/orders/:order_id").delete(deleteOrderById)
+app.route("/orders").post(postOrder);
 
 // ERROR HANDLING / endware
 //   If a call made it this far, something was wrong with it.
