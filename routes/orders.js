@@ -1,6 +1,6 @@
 // TODO: MONGOIZE
 
-function getOrdersList(req, res); {
+function getOrdersList(req, res) {
     console.debug("endpoint: /orders");
     console.debug(data.orders);
     res.send(data.orders);
