@@ -26,7 +26,7 @@ function deleteOrderById(req, res) {
     }
 }
 
-function postOrder(req, res) {
+function postNewOrder(req, res) {
     let newOrder = sanitizeOrder(req.body);
     console.log("newOrder")
     console.log(newOrder)

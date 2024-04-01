@@ -12,6 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded((extended = true)));
 app.use("/", router);
 
+
 // this endpoint
 const protocol = "http";
 const host = "localhost";
@@ -165,50 +166,22 @@ router.use((req, res, next) => {
 
 // ROUTES
 
-// customers
 app.route("/customers").get(getCustomerById)
 app.route("/customers").post(postNewCustomer)
 app.route("/customers/:customer_id").get(getCustomerList)
 
-// toppings
-//  > GET = list toppings
-//  > POST = add toppings  (expects a list of strings)
-app.route("/toppings")
-    .all((req, res, next) => {
-        console.debug("endpoint: /toppings");
-        next();
-    })
-    .get((req, res) => {
-        res.json(data.toppings);
-    })
-    .post((req, res) => {
-        // console.log("/toppings/post")
-        // console.log(req.body)
-        let newToppings = req.body;
-        if (Array.isArray(newToppings)) {
-            for (let topping of newToppings) {
-                if (typeof topping == "string") {
-                    let newTopping = sanitizeString(topping);
-                    if (!data.toppings.includes(newTopping)) {
-                        data.toppings.push(newTopping);
-                        console.log(`Adding topping: ${newTopping}`);
-                    }
-                }
-            }
-        }
-        saveData()
-        res.json(data.toppings);
-    });
+app.route("/toppings").get(getToppings)
+app.route("/toppings").post(postNewTopping)
 
 app.route("/orders").get(getOrdersList);
 app.route("/orders/:order_id").get(getOrderById)
 app.route("/orders/:order_id").delete(deleteOrderById)
-app.route("/orders").post(postOrder);
+app.route("/orders").post(postNewOrder);
+
 
 // ERROR HANDLING / endware
 //   If a call made it this far, something was wrong with it.
 
-// catch any request sent without the prefix
 app.all("/*", (req, res) => {
     res.status(403).json({
         error: `Welcome to APIzza! Public endpoints are available at: ${url}`,
@@ -229,13 +202,13 @@ app.use((req, res, next) => {
     res.status(404).json({error: "Resource not found."});
 });
 
-// any other...other?
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(404).json({error: `Error accessing resource. ${err}`});
 });
 
-// GO / LISTEN
+
+// set it loose!
 
 app.listen(port, () => {
     console.log(`APIzza server listening at:  ${url}`);
