@@ -1,14 +1,5 @@
 import mongoose from "mongoose";
 
-"topping": "goomba_bacon",
-"premium": false,
-"vegetarian": false,
-"vegan": false,
-"consumable outside Mario World": true
-
-
-
-
 const toppingSchema = new mongoose.Schema(
     {
         topping: {
@@ -17,7 +8,7 @@ const toppingSchema = new mongoose.Schema(
             required: true,
             index: text,
             match: /^[[:print:]]+$/,
-            message: "Just your name in basic latin characters, please. Don't need a PNG of your face or anything.",
+            message: "Just basic latin characters, please.",
         },
         premium: Boolean,
         vegetarian: Boolean,

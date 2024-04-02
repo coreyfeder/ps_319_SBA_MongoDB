@@ -1,4 +1,4 @@
-{
+[
     {
         "topping": "extra cheese",
         "premium": false,
@@ -55,4 +55,4 @@
         "vegan": true,
         "consumable outside Mario World": true
     }
-}
+]
