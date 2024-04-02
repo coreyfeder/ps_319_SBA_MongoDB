@@ -1,5 +1,5 @@
 /*
-Version: https://mongoosejs.com/docs/guide.html#definition
+One version: https://mongoosejs.com/docs/guide.html#definition
 ```
 import mongoose from "mongoose";
 const { Schema } = mongoose;
@@ -11,7 +11,14 @@ Another version: (maybe from slides?)
 import mongoose from "mongoose";
 const mySchema = new mongoose.Schema({})
 ```
+
+And yet another:
+```
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+```
  */
+
 
 import mongoose from "mongoose";
 import { Int32 } from "../node_modules/mongodb/mongodb";
@@ -35,7 +42,7 @@ customerSchema.methods.future = function () {
  */
 
 // Compile the schema into a model and export it.
-export default mongoose.model("Test", testSchema);
+export default mongoose.model("Test", testSchema, "test");
 /*
 const Kitten = mongoose.model('Kitten', kittySchema);
 const Test = mongoose.model('Test', testSchema);
