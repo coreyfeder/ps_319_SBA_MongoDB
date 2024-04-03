@@ -1,11 +1,15 @@
 // TODO: MONGOIZE
+import customer from "../models/customer.mjs";
 
-function getCustomerList(req, res) {
-    res.json(data.customers);
+export function getCustomerList(req, res) {
+    let customerList = customer.find().projection(exclude { '_id' })
+    const customerList = await customer.find();
+    console.log(customerList);//
+    res.json(customerList);
 }
 
-function getCustomerById(req, res) {
-    let foundCustomer = findCustomerById(req.params.customer_id);
+export function getCustomerById(req, res) {
+    let foundCustomer = customer.findById(req.params.customer_id);
     if (foundCustomer) {
         res.json(foundCustomer);
     } else {
@@ -13,7 +17,7 @@ function getCustomerById(req, res) {
     }
 }
 
-function postNewCustomer(newCustomer) {
+export function postNewCustomer(newCustomer) {
     let maxCurrentCustomerId = data.customers[data.customers.length - 1].customer_id;
     newCustomer.customer_id = maxCurrentCustomerId + 1;
     data.customers.push(newCustomer);

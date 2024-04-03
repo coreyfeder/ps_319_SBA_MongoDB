@@ -7,6 +7,7 @@ const toppingSchema = new mongoose.Schema(
             trim: true,
             required: true,
             index: text,
+            maxLength: 36,
             match: /^[[:print:]]+$/,
             message: "Just basic latin characters, please.",
         },
